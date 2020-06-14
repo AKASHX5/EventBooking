@@ -1,5 +1,7 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
+import {Query} from 'react-apollo'
+import {gql} from 'apollo-boost'
 // import List from "@material-ui/core/List";
 // import ListItem from "@material-ui/core/ListItem";
 // import ListItemText from "@material-ui/core/ListItemText";
@@ -10,7 +12,42 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 // import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-const TrackList = ({ classes }) => <div>TrackList</div>;
+const EventList = () => (
+  <Query query = {GET_EVENTS_QUERY}>
+      {({data, loading, error})=>{
+          if(loading) return <div>Loading</div>
+          if(error) return <div>error</div>
+
+          return <div>{JSON.stringify(data)}</div>
+
+      }}
+
+  </Query>
+)
+
+const GET_EVENTS_QUERY = gql`
+{
+ events {
+     id 
+     name
+      startTime
+      endTime
+      bookingStatus
+
+ }
+}
+`
+
+// const ME_QUERY = gql`
+
+//     me {
+//         email
+//         id
+//         password
+//         username
+//     }
+// `
+
 
 const styles = {
   root: {
@@ -29,4 +66,4 @@ const styles = {
   }
 };
 
-export default withStyles(styles)(TrackList);
+export default withStyles(styles)(EventList);

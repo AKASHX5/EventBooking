@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 
 class Event(models.Model):
     name = models.CharField(max_length=255)
-    time = models.DateTimeField(auto_now=False)
+    start_time = models.DateTimeField(auto_now=False)
+    end_time = models.DateTimeField(auto_now=False)
     created_by = models.ForeignKey(get_user_model(),on_delete=models.CASCADE,null=True,blank=True)
     booking_status = models.BooleanField(default=False)
 

@@ -5,6 +5,7 @@ import {gql} from 'apollo-boost'
 import App from './pages/App'
 import Profile from './pages/Profile'
 import Header from './components/Shared/Header'
+// import EvenList from './components/Event/EventList'
 
 // import EventCalendar from './EventCalendar/EventCalendar'
 
@@ -12,6 +13,7 @@ import Header from './components/Shared/Header'
 
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import EventCalendar from "./components/EventCalendar/EventCalendar";
+import EventList from "./components/Event/EventList";
 
 const Root = () => (
     <Query query = {GET_EVENTS_QUERY}>
@@ -29,6 +31,7 @@ const Root = () => (
                     <Route exact path='/' component = {App}/>
                     <Route path='/profile/:id' component = {Profile}/>
                     <Route path='/calendar' component = {EventCalendar}/>
+                    <Route path='/event' componen={EventList}/>
                     </Switch>
                     </>
                     
@@ -47,7 +50,9 @@ const GET_EVENTS_QUERY = gql`
    events {
        id 
        name
-       time 
+       startTime
+       endTime
+       bookingStatus
    }
 }
 `
