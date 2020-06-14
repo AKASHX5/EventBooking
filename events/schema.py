@@ -44,23 +44,26 @@ class CreateEvent(graphene.Mutation):
     id = graphene.Int()
     name = graphene.String()
     time = graphene.DateTime()
+    booking_status = graphene.Boolean()
 
     class Arguments:
         name = graphene.String()
         time = graphene.DateTime()
+        booking_status = graphene.Boolean()
 
-    def mutate(self,info,name,time ):
+    def mutate(self,info,name,time,booking_status ):
         user = info.context.user
 
         if user.is_anonymous:
             raise Exception("Log in to add track")
-        event = Event(name=name,time=time,created_by=user)
+        event = Event(name=name,time=time,created_by=user,booking_status=booking_status)
         event.save()
 
         return CreateEvent(
             id=event.id,
             name=event.name,
             time=time,
+            booking_status=booking_status
         )
 
 
@@ -100,8 +103,9 @@ class UpdateEvent(graphene.Mutation):
         event_id = graphene.Int(required=True)
         name = graphene.String()
         time = graphene.DateTime()
+        booking_status = graphene.Boolean()
 
-    def mutate(self,info, event_id, name, time):
+    def mutate(self,info, event_id, name, time,booking_status):
         user = info.context.user
         event = Event.objects.get(id=event_id)
 
@@ -110,6 +114,7 @@ class UpdateEvent(graphene.Mutation):
 
         event.name = name
         event.time = time
+        event.booking_status = booking_status
 
         event.save()
         return UpdateEvent(event=event)

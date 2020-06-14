@@ -7,6 +7,7 @@ class Event(models.Model):
     name = models.CharField(max_length=255)
     time = models.DateTimeField(auto_now=False)
     created_by = models.ForeignKey(get_user_model(),on_delete=models.CASCADE,null=True,blank=True)
+    booking_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -10,20 +10,37 @@ import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
-// import Dialog from "@material-ui/core/Dialog";
-// import DialogActions from "@material-ui/core/DialogActions";
-// import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
-// import DialogTitle from "@material-ui/core/DialogTitle";
-// import Slide from "@material-ui/core/Slide";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
-// import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+// import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@material-ui/core";
+import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 
-const Register = ({ classes }) => {
+import Error from '../Shared/Error'
 
-  const [username,setUsername] = useState(" ")
-  const [email,setEmail] = useState(" ")
-  const [password,setPassword] = useState(" ")
+
+function Transition(props){
+  return <Slide direction="up"{...props}/>
+}
+
+
+
+const Register = ({ classes,setNewUser }) => {
+
+  const [username,setUsername] = useState("")
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+  const [open,setOpen] = useState(false)
+  
+
+  const handleSubmit = (event, createUser) => {
+    event.preventDefault()
+    createUser()
+  }
 
   return (
     <div className={classes.root}>
@@ -36,18 +53,24 @@ const Register = ({ classes }) => {
         </Typography>
 
 
-        <Mutation mutation={REGISTER_MUTATION}>
-          {()=>{
+        <Mutation mutation={REGISTER_MUTATION}
+          variables = {{username,email,password}}
+          onCompleted={data=>{
+            console.log({data})
+            setOpen(true)
+          }}
+        >
+          {(createUser,{loading,error} )=>{
             return ( 
-              <form className = {classes.form}>
+              <form onSubmit={event => handleSubmit(event,createUser)}  className = {classes.form}>
                 <FormControl margin = "normal" required fullWidth>
                   <InputLabel htmlFor="username">username</InputLabel>
-                  <Input id ="username" onChange={event=>setUsername(event.target.value)}/>
+                  <Input id ="username" onChange={event => setUsername(event.target.value)}/>
                 </FormControl>
 
                 <FormControl margin = "normal" required fullWidth>
                   <InputLabel htmlFor="email">email</InputLabel>
-                  <Input id ="email" onChange={event=>setEmail(event.target.value)}/>
+                  <Input id ="email" onChange = {event => setEmail(event.target.value)}/>
                 </FormControl>
 
                 <FormControl margin = "normal" required fullWidth>
@@ -60,18 +83,17 @@ const Register = ({ classes }) => {
                 fullWidth
                 variant='contained'
                 color = 'secondary'
+                disabled={loading|| !username.trim() || !email.trim() || !password.trim()}
                 >
-                  Register
+                  {loading ? "Registering...":"Register"}
                 </Button>
                 <Button
                 color='primary'
                 variant='outlined'
                 fullWidth>
                   Previous User? Login to Continue
-                
-
                 </Button>
-
+                {error && <Error error={error}/>}
               </form>
 
 
@@ -81,6 +103,33 @@ const Register = ({ classes }) => {
         </Mutation> 
 
       </Paper>
+
+            <Dialog
+            open = {open}
+            disableBackdropClick={true}
+            TransitionComponent = {Transition}
+
+            >
+              <DialogTitle>
+                <VerifiedUserTwoTone className={classes.icon}/>
+                New Account
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+        user {username} successfully registered
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                color="primary"
+                variant='contained'
+                onClick={()=> setNewUser(false)}>
+                    Login
+                </Button>
+
+              </DialogActions>
+            </Dialog>
+
     </div>
   );
 
@@ -96,9 +145,7 @@ mutation($username:String!,$email:String!,$password:String!)
       email
     }
   }
-}`
-
-
+}`;
 
 const styles = theme => ({
   root: {
