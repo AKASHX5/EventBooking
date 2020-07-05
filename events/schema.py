@@ -90,8 +90,6 @@ class CreateBooking(graphene.Mutation):
         if not event:
             raise Exception("Cannot find the following schedule")
 
-
-
         Booking.objects.create(
             booked_by=subscriber,
             event=event
